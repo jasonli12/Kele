@@ -88,6 +88,19 @@ class Kele
     })
   end
 
+  def update_submission(submission_id, checkpoint_id, assignment_branch, assignment_commit_link, comment, enrollment_id = get_my_enrollment_id.to_s)
+    url = 'https://www.bloc.io/api/v1/checkpoint_submissions/' + submission_id.to_s
+    response = self.class.put(url,
+      headers: {authorization: @auth_token},
+      body: {
+        "assignment_branch": assignment_branch,
+        "assignment_commit_link": assignment_commit_link,
+        "checkpoint_id": checkpoint_id,
+        "comment": comment,
+        "enrollment_id": enrollment_id
+    })
+  end
+
   def get_me
     response = self.class.get('https://www.bloc.io/api/v1/users/me',
     headers: {authorization: @auth_token})
