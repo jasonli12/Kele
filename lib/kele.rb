@@ -1,5 +1,6 @@
 require 'pry'
 require 'httparty'
+require 'json'
 
 class Kele
   include HTTParty
@@ -7,7 +8,7 @@ class Kele
     @email = email
     @password = password
     @api = "https://www.bloc.io/api/v1"
-    @token = set_session_token
+    @auth_token = set_session_token
   end
 
 
@@ -20,5 +21,11 @@ class Kele
       })
 
     response["auth_token"]
+  end
+
+  def get_me
+    response = self.class.get('https://www.bloc.io/api/v1/users/me',
+      headers: {authorization: @auth_token})  
+    JSON.parse(response.body)
   end
 end
