@@ -9,6 +9,7 @@ class Kele
     @password = password
     @api = "https://www.bloc.io/api/v1"
     @auth_token = set_session_token
+    @mentor_id = get_mentor_id
   end
 
 
@@ -23,9 +24,24 @@ class Kele
     response["auth_token"]
   end
 
+  def get_me_body
+    JSON.parse(get_me.body)
+  end
+
+  def get_mentor_id
+    response = self.class.get('https://www.bloc.io/api/v1/users/me',
+      headers: {authorization: @auth_token})
+    JSON.parse(get_me.body)["current_enrollment"]["mentor_id"]
+  end
+
+  def get_mentor_availability
+    url = 'https://www.bloc.io/api/v1/mentors/'+ @mentor_id.to_s+ '/student_availability'
+    response = self.class.get(url, headers: {authorization: @auth_token})
+    JSON.parse(response.body)
+  end
+
   def get_me
     response = self.class.get('https://www.bloc.io/api/v1/users/me',
-      headers: {authorization: @auth_token})  
-    JSON.parse(response.body)
+    headers: {authorization: @auth_token})
   end
 end
