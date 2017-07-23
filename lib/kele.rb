@@ -20,7 +20,7 @@ class Kele
         email: @email,
         password: @password
       })
-  
+
     response["auth_token"]
   end
 
@@ -39,6 +39,36 @@ class Kele
   def get_mentor_availability(mentor_id)
     url = 'https://www.bloc.io/api/v1/mentors/' + mentor_id.to_s + '/student_availability'
     get_parse(url)
+  end
+
+  def get_messages(page=1)
+    url = "https://www.bloc.io/api/v1/message_threads"
+    response = self.class.get(url, headers: {authorization: @auth_token}, body: {page: page})
+    JSON.parse(response.body)
+  end
+
+  def create_message(sender, recipient_id, thread_token=nil, subject, body)
+    url = "https://www.bloc.io/api/v1/messages"
+    if thread_token == nil
+      response = self.class.post(url,
+        headers: {authorization: @auth_token},
+        body:{
+          "sender": sender,
+          "recipient_id": recipient_id,
+          "subject": subject,
+          "stripped-text": body
+        })
+    else
+      response = self.class.post(url,
+        headers: {authorization: @auth_token},
+        body:{
+          "sender": sender,
+          "recipient_id": recipient_id,
+          "token": thread_token,
+          "subject": subject,
+          "stripped-text": body
+      })
+    end
   end
 
   def get_me
