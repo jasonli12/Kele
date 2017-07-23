@@ -29,11 +29,15 @@ class Kele
   end
 
   def get_my_mentor_id
-    JSON.parse(get_me.body)["current_enrollment"]["mentor_id"]
+    get_me_body["current_enrollment"]["mentor_id"]
   end
 
   def get_my_roadmap_id
-    JSON.parse(get_me.body)["current_enrollment"]["roadmap_id"]
+    get_me_body["current_enrollment"]["roadmap_id"]
+  end
+
+  def get_my_enrollment_id
+    get_me_body["current_enrollment"]["id"]
   end
 
   def get_mentor_availability(mentor_id)
@@ -69,6 +73,19 @@ class Kele
           "stripped-text": body
       })
     end
+  end
+
+  def create_submission(checkpoint_id, assignment_branch, assignment_commit_link, comment, enrollment_id = get_my_enrollment_id.to_s)
+    url = 'https://www.bloc.io/api/v1/checkpoint_submissions'
+    response = self.class.post(url,
+      headers: {authorization: @auth_token},
+      body: {
+        "assignment_branch": assignment_branch,
+        "assignment_commit_link": assignment_commit_link,
+        "checkpoint_id": checkpoint_id,
+        "comment": comment,
+        "enrollment_id": enrollment_id
+    })
   end
 
   def get_me
